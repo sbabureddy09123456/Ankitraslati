@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel='stylesheet' href='_bootstrap.min.css' />
+    <link rel='stylesheet' href='_nestor_main_v1.1.css'>
+    <style>
+        .panel {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background-color: transparent;
+            overflow: auto;
+        }
+        
+        .pp {
+            padding: 0;
+        }
+        
+        .panel img {
+            width: 50px;
+            object-fit: contain;
+        }
+        
+        #panelHeading1 {
+            padding: 4px;
+        }
+        
+        #panelHeading1 img {
+            width: 30px;
+            object-fit: contain;
+        }
+        
+        #panelHeading2 {
+            padding: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #panelQuestion,
+        #panelQAudio {
+            display: inline-block;
+        }
+        
+        #panelQAudio {
+            margin-left: 2vw;
+        }
+        
+        #panelQImage {}
+        
+        #panelQImage img {
+            background-color: white;
+            border-radius: 4px;
+            margin: 10px;
+        }
+        
+        #panelOptions {
+            overflow: auto;
+        }
+        
+        #panelOAudio {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .audioPlay {
+            display: none;
+        }
+        
+        .n-audio-button {}
+        
+        .options_buttons {
+            display: inline-block;
+            margin: 6px;
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            border: 3px solid white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .options img {
+            border-radius: 5px;
+            object-fit: contain;
+            background-color: white;
+        }
+        
+        .option_correct {
+            border-color: green;
+            pointer-events: none !important;
+        }
+        
+        .button_c {
+            -webkit-box-shadow: 0px 3px 0px #19692c, 0px 3px 6px rgba(0, 0, 0, 0.9);
+            background-color: #28a745;
+            position: relative;
+            top: 6px;
+        }
+        
+        .option_wrong {
+            border-color: red;
+        }
+        
+        .optionActive {
+            border-color: cadetblue;
+            transform: scale(1.05);
+            -webkit-transform: scale(1.05);
+        }
+        
+        .panelPopup_overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .panelPopup {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            -webkit-transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: cornsilk;
+            border-radius: 8px;
+            font-size: 30px;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+        }
+        
+        @media only screen and (max-width: 600px) {
+            .panelPopup {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Default Fields for card -->
+    <span class="se-pre-con"></span>
+    <span style="display:none" id="noteId">{{Note Id}}</span>
+    <span style="display:none" id="ankiTags">{{Tags}}</span>
+    <span style="display:none" id="ankiType">{{Type}}</span>
+    <span style="display:none" id="n-cardBackground">{{Card_background}}</span>
+    <span style="display:none" id="n-panelBackground">{{Panel_background}}</span>
+    <span style="display:none" id="n-imageBackground">{{Image_background}}</span>
+    <span style="display:none" id="n-backgroundMusic">{{Background_music}}</span>
+    <span style="display:none" id="n-instructions-text">{{Instructions_text}}</span>
+    <span style="display:none" id="n-instructions-audio-w">{{Instructions_audio_w}}</span>
+    <span style="display:none" id="n-instructions-audio-n">{{Instructions_audio_n}}</span>
+    <span style="display:none" id="n-instructions-video">{{Instructions_video}}</span>
+    <span style="display:none" id="n-header-audio-n">{{Header_audio_n}}</span>
+    <span style="display:none" id="n-header-audio-w">{{Header_audio_w}}</span>
+    <span style="display:none" id="n-headers-audio-n">{{Header_audio_n}}</span>
+    <span style="display:none" id="n-headers-audio-w">{{Header_audio_w}}</span>
+    <!-- End -->
+    <span style='display: none' id='f_heading'>{{Back_heading}}</span>
+    <span style='display: none' id='f_question'></span>
+    <span style='display: none' id='f_qaudios'>{{Audio}}</span>
+    <span style='display: none' id='f_qimage'></span>
+    <span style='display: none' id='f_options'>{{Options}}</span>
+    <span style='display: none' id='f_oaudios'>{{Options_audio}}</span>
+    <div class='n-wrapper'>
+        <!-- Main Body -->
+        <div class='n-mainBody panel-group' id='wrapper'>
+            <div class="panel panel-primary text-center">
+                <div class="panel-body pp font_1" id='panelHeading1'></div>
+                <div class="panel-body pp font_2" id='panelHeading2'>
+                    <div id='panelQuestion'></div><span id='panelQAudio'></span>
+                </div>
+                <div class="panel-body pp font_9" id='panelOptions'></div>
+                <div class="panel-body pp font_2" id='panelOAudio'>
+                    Listen to options &#x2192; &nbsp;<img src='_audioPlay.gif' style='width:30px;
+                    height:30px' class='audioPlay' /></span><span class='panelOAudioDiv'></span><img src='_audioPlay.gif' style='width:30px;
+                    height:30px' class='audioPlay' />
+                </div>
+            </div>
+            <div class='panelPopup_overlay'></div>
+            <div class='panelPopup font_9'>
+                <div class='alert alert-success text-center'>
+                    Excellent<br>Correct Answer
+                    <hr>
+                    <!-- <div class='btn btn-primary btn-lg' onClick='setupOptions()'>Play Again</div><br>
+                    (or)<br> -->
+                    Click SHOW ANSWER to proceed
+                </div>
+            </div>
+        </div>
+    </div>
+    <a id='dummyAudio' href='#' style='display:none'></a>
+    <div id='reinforce' style='display: none'>{{Attributes}}</div>
+    <img src='_missing_image.png' style='display:none' />
+    <script src='_jquery.min.js'></script>
+    <script src='_modernizr-custom.js'></script>
+    <script src='_bootstrap.min.js'></script>
+    <script src='_flowtype.js'></script>
+    <script src='_user_info_v0.1.js'></script>
+    <script src='_notetypes_info.js'></script>
+    <script src='_nestor_main_v1.1.js'></script>
+    <script src='_justify-multiple-images_v1.2.js'></script>
+    <script>
+        function loadInnerCard() {
+            let promise = new Promise((resolve, reject) => {
+                clearAllTimeouts();
+                $('.se-pre-con').fadeOut('slow', function() {
+                    $(this).remove();
+                });
+                $('#qa').flowtype({
+                    minimum: 500,
+                    maximum: 1200,
+                    minFont: 20,
+                    maxFont: 40,
+                    fontRatio: 35
+                });
+                var windowWidth = $(window).width();
+                var windowHeight = $("#wrapper").height();
+                $("#wrapper").css({
+                    "height": windowHeight + "px"
+                });
+                wrapperHeight = $("#wrapper").height();
+
+                if (window.showPanelBackground) {
+                    $(".panel").css({
+                        "background-color": "transparent"
+                    });
+                } else {
+                    // Random Panel Colors
+                    var lightColors = randomLightColors(6);
+                    $('#panelHeading1').css({
+                        "background-color": lightColors[0]
+                    });
+                    $('#panelHeading2').css({
+                        "background-color": lightColors[1]
+                    });
+                    $('#panelQImage').css({
+                        "background-color": lightColors[2]
+                    });
+                    $('#panelOptions').css({
+                        "background-color": lightColors[3]
+                    });
+                    $('#panelOAudio').css({
+                        "background-color": lightColors[4]
+                    });
+                    $('#panelFooter').css({
+                        "background-color": lightColors[5]
+                    });
+                }
+
+                maze_type1();
+                resolve('notetype loaded:no_buddy');
+            })
+            return promise;
+        }
+
+
+        async function maze_type1() {
+            var heading = wrapText($("#f_heading").html());
+            var question = wrapText($("#f_question").html());
+            var q_audios = $("#f_qaudios").text();
+            var q_image = wrapText($("#f_qimage").html());
+            var options = wrapText($("#f_options").html());
+            var o_audios = $("#f_oaudios").text();
+            headerAudioPlay();
+
+            if (heading == '') {
+                $("#panelHeading1").hide();
+            } else {
+                $("#panelHeading1").html(heading);
+            }
+            if (question == '' && q_audios == '') {
+                $("#panelHeading2").hide();
+            } else {
+                if (question == '') {
+                    $("#panelQuestion").hide();
+                } else {
+                    $("#panelQuestion").html(question);
+                }
+                if (q_audios == '') {
+                    $("#panelQAudio").hide();
+                } else {
+                    playAudioTag({
+                        elem: $("#panelQAudio"),
+                        audio: q_audios.split(",,"),
+                        noControls: true,
+                        autoplay: false
+                    });
+                }
+            }
+
+            if (o_audios == '') {
+                $("#panelOAudio").hide();
+            } else {
+                playAudioTag({
+                    elem: $(".panelOAudioDiv"),
+                    audio: [],
+                    noControls: true,
+                    autoplay: false
+                });
+            }
+
+            if (options == '' && o_audios != '') {
+                options = [];
+                for (var i = 0; i < o_audios.length; i++) {
+                    options.push(eval(i + 1));
+                }
+            } else {
+                options = options.split(",,");
+            }
+            window.o_audios = o_audios;
+            window.options = options;
+
+            if (options == '') {
+                $("#panelOptions").hide();
+            } else {
+                if ($("#f_options").find('img').length > 0) {
+                    $("#panelOptions").css({
+                        "flex": "1"
+                    });
+                    setHeightOptions();
+                    setTimeout(function() {
+                        setupOptions().then(function() {
+                            $("#panelOptions").justifyMultipleImages();
+                        })
+                    }, 1000);
+                } else {
+                    setupOptions();
+                    if (q_image == '') {
+                        $("#panelQImage").hide();
+                    } else {
+                        $("#panelQImage").css({
+                            "flex": "1"
+                        });
+                        await setHeightQImage();
+                        $("#panelQImage").html(q_image);
+                        await $("#panelQImage").justifyMultipleImages();
+                        $("#panelQImage").modalImage();
+                    }
+                }
+            }
+        }
+
+        $(window).resize(function() {
+            $("#panelQImage").justifyMultipleImages();
+            $("#panelOptions").justifyMultipleImages();
+        });
+
+        async function setupOptions() {
+            var tags = $("#ankiTags").text().split(" ");
+            console.log({
+                tags
+            });
+            var tag = '';
+            for (var i = 0; i < tags.length; i++) {
+                if (tags[i].indexOf('Maze_type') != -1) tag = tags[i].split(":")[1];
+            }
+            console.log({
+                tag
+            });
+            $("#panelOptions").html("");
+            let add = o_audios.split(",,");
+            let opp = options;
+            var limit = 0;
+            if (tag[1] == '' || tag == 'Single') {
+                limit = 0;
+            } else if (tag == 'Double') {
+                limit = 1;
+            } else if (tag == 'Rotate_images') {
+                opp = [options[0], options[0], options[0], options[0]];
+            }
+
+            for (var i = 0; i < opp.length; i++) {
+                if (i <= limit) {
+                    if (opp[i].indexOf('<img') != -1) {
+                        opp[i] = `<div class='options options_buttons opCorrect' data-val='${i}' data-audio='${add[i]}' >${opp[i]}</div>`;
+                    } else {
+                        opp[i] = `<div class='options button_3d_1 opCorrect' data-val='${i}' data-audio='${add[i]}' >${opp[i]}</div>`;
+                    }
+                } else {
+                    if (opp[i].indexOf('<img') != -1) {
+                        opp[i] = `<div class='options options_buttons opWrong' data-val='${i}' data-audio='${add[i]}' >${opp[i]}</div>`;
+                    } else {
+                        opp[i] = `<div class='options button_3d_1 button_3d_1_w opWrong' data-val='${i}' data-audio='${add[i]}' >${opp[i]}</div>`;
+                    }
+                }
+            }
+            shuffle(opp);
+            $("#panelOptions").html(opp.join(''));
+            if (tag == 'Rotate_images') {
+                $(".opWrong").each(function(cnt) {
+                    $(this).find('img').css({
+                        "transform": "rotate(" + 90 * eval(cnt + 1) + "deg)"
+                    });
+                });
+            }
+
+            if (o_audios != '') {
+                $(".options").each(function(ii) {
+                    $(this).attr('data-aud', ii);
+                });
+                $("#panelOAudio").unbind('click').click(function() {
+                    ankiPlay();
+                });
+            }
+            var clickCount = 0;
+            $(".options").unbind('click').click(function() {
+                let val = $(this).attr('data-val');
+                if (val <= limit.toString()) {
+                    let el = this;
+                    playAudio('correct').then(function() {
+                        var gg = $(el).attr('data-audio');
+                        playAudio(gg);
+                    });
+                    $(this).addClass('option_correct');
+                    $(this).addClass('jello-horizontal');
+                    if ($(this).find('img').length == 0) $(this).addClass('button_c');
+                    clickCount++;
+                    if (clickCount > limit) {
+                        $(".options").css({
+                            "pointer-events": "none"
+                        });
+                        $(".opWrong").addClass('rotate-out-center');
+                        if (tag == 'Replace_image') {
+                            $("#panelQImage").slideUp('slow');
+                        }
+                        setTimeout(function() {
+                            $(".opWrong").remove();
+                            setTimeout(function() {
+                                $(".panelPopup_overlay").fadeIn('slow');
+                                $(".panelPopup").fadeIn('slow');
+                                coinFlip();
+                            }, 1000)
+                        }, 2000);
+                    }
+                } else {
+                    playAudio('wrong');
+                    $(this).addClass('option_wrong');
+                    $(this).addClass('shake-lr');
+                    $(".options").css({
+                        "pointer-events": "none"
+                    });
+                    setTimeout(function() {
+                        $(".options").css({
+                            "pointer-events": "auto"
+                        });
+                        $(".options").removeClass('option_wrong');
+                        $(".options").removeClass('shake-lr');
+                    }, 500);
+                }
+            });
+        }
+
+        function ankiPlay(aud) {
+            let promise = new Promise((resolve, reject) => {
+                $(".panel").css({
+                    "pointer-events": "none"
+                });
+                let audio = aud;
+                var audCount = 0;
+                playAud();
+
+                function playAud() {
+                    let audd = $(`.options[data-aud='${audCount}']`).attr('data-audio');
+                    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                        var loc = window.location.pathname;
+                        loc = loc.replace("__viewer__.html", "");
+                        $("#dummyAudio").attr("href", "playsound:file://" + loc + audd + "");
+                    } else {
+                        $("#dummyAudio").attr("href", 'javascript:pycmd("ankiplay' + audd + '")');
+                    }
+                    window.location.href = $("#dummyAudio").attr('href');
+                    $(".audioPlay").show();
+                    $(`.options[data-aud='${audCount}']`).addClass('optionActive');
+                    if (audd.indexOf('!!!') != -1) {
+                        audd = parseFloat(audd.substring(audd.indexOf("!!!") + 3, audd.lastIndexOf('!!!')));
+                    } else {
+                        audd = 2;
+                    }
+                    audCount++;
+                    setTimeout(function() {
+                        $(`.options`).removeClass('optionActive');
+                        if (audCount >= $(".options").length) {
+                            $(".audioPlay").hide();
+                            $(".panel").css({
+                                "pointer-events": "auto"
+                            });
+                            resolve('');
+                        } else {
+                            playAud();
+                        }
+                    }, audd * 1000);
+                }
+            });
+        }
+
+        function setHeightQImage() {
+            let promise = new Promise((resolve, reject) => {
+                var hh = $("#panelQImage").outerHeight();
+                $("#panelQImage").css({
+                    "height": hh + "px",
+                    "max-height": hh + "px"
+                });
+                resolve('');
+            });
+            return promise;
+        }
+
+        function setHeightOptions() {
+            let promise = new Promise((resolve, reject) => {
+                var hh = $("#panelOptions").outerHeight();
+                $("#panelOptions").css({
+                    "height": hh + "px",
+                    "max-height": hh + "px"
+                });
+                resolve('');
+            });
+            return promise;
+        }
+    </script>
+</body>
+
+</html>
