@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Basic_Template_Type3_v1.1</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="_bootstrap.min.css" />
+    <link rel="stylesheet" href="_nestor_main_v1.1.css" />
+    <style>
+        .panel {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #panelBody0 {
+            display: flex;
+            flex-direction: row;
+            /*overflow-x: auto;*/
+            align-items: center;
+            justify-content: center;
+        }
+
+        #panelBody1 {
+            flex: 1 1 auto;
+            min-height: 0;
+            height: 0;
+            overflow: auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+
+        .example {
+            display: inline-block;
+            margin: 0px 20px;
+            padding: 5px;
+            position: relative;
+            pointer-events: auto;
+            border-radius: 10px;
+            border: 3px solid #000;
+            width: auto;
+            height: auto;
+            font-size: 0.8em;
+        }
+
+        .svgbox {
+            height: 100px;
+            width: 100px;
+        }
+
+        .imgg {
+            height: 150px;
+            width: 150px;
+            margin: 5px;
+            pointer-events: auto;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        svg {
+            height: 100%;
+            width: 100%;
+        }
+        @media only screen and (max-width: 960px) {
+            .imgg {
+                height: 120px;
+                width: 120px;
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Default Fields for card -->
+    <span class="se-pre-con"></span>
+    <span style="display:none" id="noteId">{{Note Id}}</span>
+    <span style="display:none" id="ankiTags">{{Tags}}</span>
+    <span style="display:none" id="ankiType">{{Type}}</span>
+    <span style="display:none" id="n-cardBackground">{{Card_background}}</span>
+    <span style="display:none" id="n-panelBackground">{{Panel_background}}</span>
+    <span style="display:none" id="n-imageBackground">{{Image_background}}</span>
+    <span style="display:none" id="n-backgroundMusic">{{Background_music}}</span>
+    <span style="display:none" id="n-instructions-text">{{Instructions_text}}</span>
+    <span style="display:none" id="n-instructions-audio-w">{{Instructions_audio_w}}</span>
+    <span style="display:none" id="n-instructions-audio-n">{{Instructions_audio_n}}</span>
+    <span style="display:none" id="n-instructions-video">{{Instructions_video}}</span>
+    <span style="display:none" id="n-header-audio-n">{{Header_audio_n}}</span>
+    <span style="display:none" id="n-header-audio-w">{{Header_audio_w}}</span>
+    <span style="display:none" id="n-header-audio-n">{{Header_audio_n}}</span>
+    <span style="display:none" id="n-header-audio-w">{{Header_audio_w}}</span>
+    <!-- End -->
+    <div id="mainimg" style="display:none"></div>
+    <div id="extraopts" style="display: none"></div>
+    <div class='n-wrapper'>
+        <!-- Main Body -->
+        <div class='n-mainBody panel-group' id='wrapper'>
+            <div class="panel panel-primary text-center">
+                <div class="panel-body font_9" id="panelHeading">{{Heading}}</div>
+                <div class="panel-body" id="panelBody0">
+                </div>
+                <div class="panel-body" id="panelBody1">
+                </div>
+                <div class="panel-footer" id="panelFooter" style='display: none;'>
+                    <div class='alert alert-success'>
+                        <div class='zoomOut'>
+                            Very Good..!!
+                            <br>
+                            Click Show Answer to proceed
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="_gsap_tweenmax.js"></script>
+    <script src="_svgPaths_v0.1.js"></script>
+    <script src="_jquery.min.js"></script>
+    <script src='_modernizr-custom.js'></script>
+    <script src="_bootstrap.min.js"></script>
+    <script src="_flowtype.js"></script>
+    <script src='_user_info_v0.1.js'></script>
+    <script src='_notetypes_info.js'></script>
+    <script src="_nestor_main_v1.1.js"></script>
+    <script src='_justify-multiple-images_v1.2.js'></script>
+    <script>
+        function loadInnerCard() {
+            let promise = new Promise((resolve, reject) => {
+                $(".se-pre-con").fadeOut("slow", function () {
+                    $(this).remove();
+                });
+                var windowWidth = $(window).width();
+                var windowHeight = $("#wrapper").height();
+                $("#wrapper").css({ height: windowHeight + "px" });
+                $("body").flowtype({
+                    minimum: 500,
+                    maximum: 1200,
+                    minFont: 20,
+                    maxFont: 40,
+                    fontRatio: 20
+                });
+                if (window.showPanelBackground) {
+                    $(".panel").css({ "background-color": "transparent" });
+                } else {
+                    // Random Panel Colors
+                    var lightColors = randomLightColors(5);
+                    $("#panelHeading").css({ "background-color": lightColors[1] });
+                    $("#panelBody0").css({
+                        "background-color": lightColors[2]
+                    });
+                    $("#panelBody1").css({
+                        "background-color": lightColors[3]
+                    });
+                    $("#panelFooter").css({
+                        "background-color": lightColors[4]
+                    });
+                }
+                imageRelation();
+                resolve('notetype loaded');
+            })
+            return promise;
+        }
+
+        function imageRelation() {
+            $("#panelFooter").slideUp("slow");
+            var images = wrapText($("#mainimg").html()).split(",,,");
+            var option=getRandom(svgPaths,2)
+           
+            var color = ["red","blue","yellow","orange","purple","green"];
+            shuffle(color);
+            localStorage.setItem("myJson", JSON.stringify(color));
+            for (var i = 0; i < 2; i++)
+            {
+                $("#panelBody0").append('<div class="example color_' + i + '"><div class="svgbox">' + option[i] + '</div><div class="colorname">' + color[i] + '</div></div>');
+                 $('.color_'+i).find("path,circle,rect,ellipse,polygon").attr("style", "fill:"+color[i]+"");
+                 $('.color_'+i).find(".colorname").css("color",color[i]);
+            }
+
+            var totaloption =4;
+            for (var i = 0,j=0; i < totaloption; i++)
+            {
+                $("#panelBody1").append("<div class='imgg pic_"+j+"' id='draw'>" + option[j] + "</div>");
+                j++;
+                if(j==2)
+                {
+                    j=0;
+                }
+            }
+
+            var parent = $("#panelBody1");
+            var divs = parent.children();
+            while (divs.length) {
+                parent.append(divs.splice(Math.floor(Math.random() * divs.length), 1)[0]);
+            }
+
+            headerAudioPlay();
+            var click = 0;
+            $(".imgg").unbind('click').click(function () {
+                var a = $(this).attr("class").split(" ")[1].split("_")[1];
+                $(this).find("path").attr("style", "fill:"+color[a]+"");
+                click++;
+                if(click==totaloption)
+                {
+                    coinFlip();
+                    $(".imgg").css("pointer-events","none")
+                }
+            });
+
+        }
+    </script>
+</body>
+
+</html>

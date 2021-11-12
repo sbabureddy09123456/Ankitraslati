@@ -1,0 +1,25 @@
+window.$userInfo_ = {
+  "user_info": true,
+  "label_name": "Student Name",
+  "label_institution": "School Name",
+  "label_location": "School Location",
+  "gender": "boy",
+  "voice": "western",
+  "name": "",
+  "institution": "The State Police Academy",
+  "location": "Chhattisgarh",
+  "avatars": [
+    "_nestor_avatar_bee3",
+    "_nestor_avatar_bird-flying",
+    "_nestor_avatar_cat",
+    "_nestor_avatar_chicken",
+    "_nestor_avatar_butterfly",
+    "_nestor_avatar_dragon",
+    "_nestor_avatar_elephant-movement",
+    "_nestor_avatar_girl-waving",
+    "_nestor_avatar_kicking-ball",
+    "_nestor_avatar_rabbit",
+    "_nestor_avatar_unicorn",
+    "_nestor_avatar_apple",
+  ]
+}
